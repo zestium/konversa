@@ -27,6 +27,7 @@ We use [Python 3.12](https://www.python.org) and [Mamba](https://github.com/mamb
 1. [FalkorDB Python client](https://github.com/falkorDB/falkordb-py).
 2. [falkordb-bulk-loader](https://pypi.org/project/falkordb-bulk-loader/).
 3. [aiogram](https://aiogram.dev/).
+4. [RDFlib](https://rdflib.dev/).
 
 Here's how to install them:
 
@@ -34,6 +35,7 @@ Here's how to install them:
 $ pip install FalkorDB
 $ pip install falkordb-builk-loader
 $ pip install aiogram
+$ pip install rdflib
 ```
 
 ## License

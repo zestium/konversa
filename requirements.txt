@@ -11,6 +11,7 @@ FalkorDB==1.0.2
 falkordb-bulk-loader==1.0.2
 frozenlist==1.4.1
 idna==3.6
+isodate==0.6.1
 magic-filter==1.0.12
 multidict==6.0.5
 multiprocess==0.70.16
@@ -19,8 +20,11 @@ pox==0.3.4
 ppft==1.7.6.8
 pydantic==2.5.3
 pydantic_core==2.14.6
+pyparsing==3.1.1
+rdflib==7.0.0
 redis==5.0.1
 setuptools==69.1.1
+six==1.16.0
 typing_extensions==4.9.0
 wheel==0.42.0
 yarl==1.9.4
