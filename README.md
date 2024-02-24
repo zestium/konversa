@@ -28,6 +28,7 @@ We use [Python 3.12](https://www.python.org) and [Mamba](https://github.com/mamb
 2. [falkordb-bulk-loader](https://pypi.org/project/falkordb-bulk-loader/).
 3. [aiogram](https://aiogram.dev/).
 4. [RDFlib](https://rdflib.dev/).
+5. [Mako](https://www.makotemplates.org/).
 
 Here's how to install them:
 
@@ -36,6 +37,7 @@ $ pip install FalkorDB
 $ pip install falkordb-builk-loader
 $ pip install aiogram
 $ pip install rdflib
+$ pip install Mako
 ```
 
 ## License
