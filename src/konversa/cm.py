@@ -1,4 +1,4 @@
-# Conversational agent
+# Conversation Management
 
 import time
 
@@ -9,6 +9,7 @@ class ConversationManager:
 
     seconds = time.time()
     local_time = time.ctime(seconds)
+    in_conversation = False
 
     def __init__(self):
 
@@ -25,3 +26,12 @@ class ConversationManager:
     def get_all_user_data(self):
 
         return self.user_data
+
+    def set_in_conversation(self, value):
+
+        self.in_conversation = value
+
+    def get_in_conversation(self):
+
+        return self.in_conversation
+
