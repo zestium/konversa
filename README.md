@@ -38,14 +38,12 @@ We use [Python 3.12](https://www.python.org) and [Mamba](https://github.com/mamb
 >>> nltk.download('punkt')
 ```
 
-9. [spaCy](https://spacy.io)
+9. [spaCy](https://spacy.io): `pip install spacy`
 10. spaCy data:
 
 ```bash
 python -m spacy download en_core_web_sm
 ```
-
-Here's how to install them:
 
 ## TELEGRAM_API_TOKEN
 
