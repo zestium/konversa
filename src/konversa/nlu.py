@@ -26,16 +26,20 @@ class IntentEngine:
 
         return self.intent_classifier.classify(the_text, self.synapse_0, self.synapse_1)
 
-    def get_ner(self, the_text):
+    def get_ner(self, the_text, full=True):
 
         self.doc = nlp(the_text)
 
         returned_str = ''
 
-        for ent in self.doc.ents:
-            returned_str += ent.text
-            returned_str += ' - ' + ent.text
-            returned_str += ' - ' + ent.label_
-            returned_str += ' - ' + str(spacy.explain(ent.label_))
+        if full:
+            for ent in self.doc.ents:
+                returned_str += ent.text
+                returned_str += ' - ' + ent.text
+                returned_str += ' - ' + ent.label_
+                returned_str += ' - ' + str(spacy.explain(ent.label_))
+        else:
+            for ent in self.doc.ents:
+                returned_str += ent.text
 
         return returned_str

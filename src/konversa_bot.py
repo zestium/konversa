@@ -33,8 +33,12 @@ async def command_start_handler(message: Message) -> None:
 async def echo_handler(message: Message) -> None:
     # old style:
     # await bot.send_message(message.chat.id, message.text)
+    #
+    
     conv_manager = konversa.ConversationManager()
+
     the_intent = intent_engine.classify_intent(message.text)
+
     user_id = message.from_user.id
     user_name = message.from_user.username
     user_first_name = message.from_user.first_name
@@ -52,21 +56,28 @@ async def echo_handler(message: Message) -> None:
     if len(the_intent) < 1:
         the_reply = "I don't understand what you mean, could you rephrase?"
     else:
-        the_reply = 'Hi ' + f_name + ' ' + l_name + '!\n' + intent_engine.get_ner(message.text) + 'Your intention: ' + the_intent[0][0]
 
-    conv_processor = konversa.ConversationProcessor(the_intent[0][0])
+        the_data = []
+        ner = intent_engine.get_ner(message.text, False)
+        the_data.append(ner)
 
-    x = conv_processor.get_steps()
-    print(x)
+        #the_reply = 'Hi ' + f_name + ' ' + l_name + '!\nNER: ' + ner + '\nYour intention: ' + the_intent[0][0]
 
-    for a in x:
-        the_reply = the_reply + a
+        conv_processor = konversa.ConversationProcessor(the_intent[0][0], the_data)
 
-    the_reply = the_reply + ' nos = ' + str(conv_processor.get_number_of_steps())
+        the_reply = conv_processor.answer_who()
+
+        #x = conv_processor.get_steps()
+        #print(x)
+
+        #for a in x:
+        #   the_reply = the_reply + a
+        #
+        #the_reply = the_reply + ' nos = ' + str(conv_processor.get_number_of_steps())
 
     await message.answer(the_reply)
 
-async def main() -> None:
+async def main() -> None: 
     # Initialize Bot instance with default bot properties which will be passed to all API calls
     bot = Bot(token=API_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     # And the run events dispatching

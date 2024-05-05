@@ -1,15 +1,20 @@
 # Conversation Processor
 
 import redis
+
+from .helpers.cp.sparql.who import *
+from .nlg import *
+
 r = redis.Redis()
 
 class ConversationProcessor:
 
     list_of_steps = []
 
-    def __init__(self, intent):
+    def __init__(self, intent, data_from_message):
 
         self.reply = r.graph(intent).query("MATCH (n) RETURN n")
+        self.the_data_from_message = data_from_message[0]
 
     def get_steps(self):
 
@@ -30,4 +35,11 @@ class ConversationProcessor:
 
         return nos
 
+    def answer_who(self):
+
+        the_answer = AnswerWho(self.the_data_from_message)
+
+        populate_answer = NaturalLanguageGeneration('answer_who', the_answer.get_item_description())
+
+        return populate_answer.view()
 
