@@ -57,9 +57,9 @@ async def echo_handler(message: Message) -> None:
         the_reply = "I don't understand what you mean, could you rephrase?"
     else:
 
-        the_data = []
+        the_data = {}
         ner = intent_engine.get_ner(message.text, False)
-        the_data.append(ner)
+        the_data['person_name'] = ner
 
         #the_reply = 'Hi ' + f_name + ' ' + l_name + '!\nNER: ' + ner + '\nYour intention: ' + the_intent[0][0]
 

@@ -4,8 +4,6 @@
 from mako.template import Template
 from mako.lookup import TemplateLookup
 
-nlg_template_dir = TemplateLookup(directories=['templates/'])
-
 class NaturalLanguageGeneration:
 
     def __init__(self, tpl_file_name, data_for_tpl):
@@ -15,6 +13,6 @@ class NaturalLanguageGeneration:
 
     def view(self):
 
-        the_template = Template(filename=self.file_name, lookup=nlg_template_dir)
+        the_template = Template(filename='konversa/templates/' + self.file_name)
         
-        return the_template.render(item_description=self.tpl_data)
+        return the_template.render(**self.tpl_data)
