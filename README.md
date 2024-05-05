@@ -63,6 +63,86 @@ set -x TELEGRAM_API_TOKEN yourToken  # if you use Fish
 python src/konversa_bot.py
 ```
 
+## Infrastructure Preparation
+
+### Redis
+
+Get [Redis Stack](https://redis.io/downloads/).
+
+See [conf/](conf/) and make some changes, suitable to your server.
+
+Run Redis Server:
+
+```bash
+$ redis-server <PATH/redis.conf> 
+```
+
+PATH can be everywhere.
+
+### Redis Client: redis-cli
+
+**Note**: symbol ``>`` is redis-cli prompt.
+
+```
+127.0.0.1:6379> GRAPH.QUERY reserve_meeting "CREATE (:Begin {req_begin:'name', num_of_steps:5})-[:next]->(:First {req_first:'date', template_first:'reserve_meeting_first'})-[:next]->(:Second {req_second:'time', template_second:'reserve_meeting_second'})-[:next]->(:Third {req_third:'agenda', template_third:'reserve_meeting_third'})-[:next]->(:Fourth {req_fourth:'member', template_fourth:'reserve_meeting_fourth'})-[:next]->(:Fifth {req_fifth:'place', template_fifth:'reserve_meeting_fifth'})-[:next]->(:End {postcondition: 'name,date,time,agenda,member,place', template:'reserve_meeting_complete'})"
+1) 1) "Labels added: 7"
+   2) "Nodes created: 7"
+   3) "Properties set: 14"
+   4) "Relationships created: 6"
+   5) "Cached execution: 0"
+   6) "Query internal execution time: 71.751520 milliseconds"
+127.0.0.1:6379> 
+```
+
+This way, there will be one key (reserve_meeting):
+
+```
+127.0.0.1:6379> info keyspace
+# Keyspace
+db0:keys=8,expires=0,avg_ttl=0
+127.0.0.1:6379> 
+```
+
+Example of query:
+
+```
+127.0.0.1:6379> GRAPH.QUERY reserve_meeting "MATCH (b:Begin)-[:next]->(f:First) WHERE f.req_first = 'date' RETURN b.num_of_steps, f.req_first"
+1) 1) "b.num_of_steps"
+   2) "f.req_first"
+2) 1) 1) (integer) 5
+      2) "date"
+3) 1) "Cached execution: 0"
+   2) "Query internal execution time: 94.713853 milliseconds"
+127.0.0.1:6379> 
+```
+
+### Redis client: redis.py
+
+```
+$ pip install redis
+```
+
+We can use `redis-py`:
+
+```python
+>>> import redis
+>>> r = redis.Redis()
+>>> reply = r.graph("reserve_meeting").query("MATCH (b:Begin)-[:next]->(f:First) WHERE f.req_first = 'date' RETURN b.num_of_steps, f.req_first")
+>>> reply.result_set
+[[5, 'date']]
+>>> 
+```
+
+### Save Database
+
+From redis-cli:
+
+```
+> SAVE
+```
+
+**Note**: case insensitive.
+
 ## License
 
 This work is [CC-BY-SA 4.0 Licensed](https://creativecommons.org/licenses/by-sa/4.0/).
