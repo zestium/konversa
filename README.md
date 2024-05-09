@@ -84,14 +84,14 @@ PATH can be everywhere.
 **Note**: symbol ``>`` is redis-cli prompt.
 
 ```
-127.0.0.1:6379> GRAPH.QUERY reserve_meeting "CREATE (:Begin {req_begin:'name', num_of_steps:5})-[:next]->(:First {req_first:'date', template_first:'reserve_meeting_first'})-[:next]->(:Second {req_second:'time', template_second:'reserve_meeting_second'})-[:next]->(:Third {req_third:'agenda', template_third:'reserve_meeting_third'})-[:next]->(:Fourth {req_fourth:'member', template_fourth:'reserve_meeting_fourth'})-[:next]->(:Fifth {req_fifth:'place', template_fifth:'reserve_meeting_fifth'})-[:next]->(:End {postcondition: 'name,date,time,agenda,member,place', template:'reserve_meeting_complete'})"
-1) 1) "Labels added: 7"
-   2) "Nodes created: 7"
-   3) "Properties set: 14"
-   4) "Relationships created: 6"
+127.0.0.1:6379> GRAPH.QUERY reserve_meeting "CREATE (:Step {order: 0, req: '', tpl:'reserve_meeting_begin'})-[:next]->(:Step {order: 1, req:'title', tpl:'reserve_meeting_1'})-[:next]->(:Step {order: 2, req:'date', tpl:'reserve_meeting_2'})-[:next]->(:Step {order: 3, req:'time', tpl:'reserve_meeting_3'})-[:next]->(:Step {order: 4, req:'agenda', tpl:'reserve_meeting_4'})-[:next]->(:Step {order: 5, req:'attendees', tpl:'reserve_meeting_5'})-[:next]->(:Step {order: 6, req:'place', tpl:'reserve_meeting_6'})-[:next]->(:Step {order: 7, req: 'title,date,time,agenda,attendees,place', tpl:'reserve_meeting_end'})"
+1) 1) "Labels added: 1"
+   2) "Nodes created: 8"
+   3) "Properties set: 24"
+   4) "Relationships created: 7"
    5) "Cached execution: 0"
-   6) "Query internal execution time: 71.751520 milliseconds"
-127.0.0.1:6379> 
+   6) "Query internal execution time: 2.679637 milliseconds"
+127.0.0.1:6379>
 ```
 
 This way, there will be one key (reserve_meeting):
@@ -106,14 +106,37 @@ db0:keys=8,expires=0,avg_ttl=0
 Example of query:
 
 ```
-127.0.0.1:6379> GRAPH.QUERY reserve_meeting "MATCH (b:Begin)-[:next]->(f:First) WHERE f.req_first = 'date' RETURN b.num_of_steps, f.req_first"
-1) 1) "b.num_of_steps"
-   2) "f.req_first"
-2) 1) 1) (integer) 5
+127.0.0.1:6379> GRAPH.QUERY reserve_meeting "MATCH (n) RETURN n.order as Order, n.req as Postcondition, n.tpl as Template"
+1) 1) "Order"
+   2) "Postcondition"
+   3) "Template"
+2) 1) 1) (integer) 0
+      2) ""
+      3) "reserve_meeting_begin"
+   2) 1) (integer) 1
+      2) "title"
+      3) "reserve_meeting_1"
+   3) 1) (integer) 2
       2) "date"
+      3) "reserve_meeting_2"
+   4) 1) (integer) 3
+      2) "time"
+      3) "reserve_meeting_3"
+   5) 1) (integer) 4
+      2) "agenda"
+      3) "reserve_meeting_4"
+   6) 1) (integer) 5
+      2) "attendees"
+      3) "reserve_meeting_5"
+   7) 1) (integer) 6
+      2) "place"
+      3) "reserve_meeting_6"
+   8) 1) (integer) 7
+      2) "title,date,time,agenda,attendees,place"
+      3) "reserve_meeting_end"
 3) 1) "Cached execution: 0"
-   2) "Query internal execution time: 94.713853 milliseconds"
-127.0.0.1:6379> 
+   2) "Query internal execution time: 1.091951 milliseconds"
+127.0.0.1:6379>
 ```
 
 ### Redis client: redis.py
@@ -125,11 +148,16 @@ $ pip install redis
 We can use `redis-py`:
 
 ```python
+Python 3.12.3 | packaged by conda-forge | (main, Apr 15 2024, 18:38:13) [GCC 12.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
 >>> import redis
 >>> r = redis.Redis()
->>> reply = r.graph("reserve_meeting").query("MATCH (b:Begin)-[:next]->(f:First) WHERE f.req_first = 'date' RETURN b.num_of_steps, f.req_first")
+>>> reply = r.graph('reserve_meeting').query("MATCH (n) RETURN n.order as Order, n.req as Postcondition, n.tpl as Template")
 >>> reply.result_set
-[[5, 'date']]
+[[0, '', 'reserve_meeting_begin'], [1, 'title', 'reserve_meeting_1'], [2, 'date', 'reserve_meeting_2'], [3, 'time', 'reserve_meeting_3'], [4, 'agenda', 'reserve_meeting_4'], [5, 'attendees', 'reserve_meeting_5'], [6, 'place', 'reserve_meeting_6'], [7, 'title,date,time,agenda,attendees,place', 'reserve_meeting_end']]
+>>> reply = r.graph('reserve_meeting').query("MATCH (n) RETURN n.order, n.req, n.tpl")
+>>> reply.result_set
+[[0, '', 'reserve_meeting_begin'], [1, 'title', 'reserve_meeting_1'], [2, 'date', 'reserve_meeting_2'], [3, 'time', 'reserve_meeting_3'], [4, 'agenda', 'reserve_meeting_4'], [5, 'attendees', 'reserve_meeting_5'], [6, 'place', 'reserve_meeting_6'], [7, 'title,date,time,agenda,attendees,place', 'reserve_meeting_end']]
 >>> 
 ```
 
