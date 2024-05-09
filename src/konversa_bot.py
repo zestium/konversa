@@ -50,6 +50,8 @@ async def echo_handler(message: Message) -> None:
 
     the_intent = intent_engine.classify_intent(message.text)
 
+    cp = konversa.ConversationProcessor()
+
     match the_intent[0][0]:
         case "question_who":
 
@@ -57,25 +59,37 @@ async def echo_handler(message: Message) -> None:
             ner = intent_engine.get_ner(message.text, False)
             the_data['person_name'] = ner
 
-            cp = konversa.ConversationProcessor(the_intent[0][0], the_data)
-
-            the_reply = cp.answer_who()
+            the_reply = cp.answer_who(the_data)
 
         case "reserve_meeting":
 
-            cm.set_user_data("session", "reserve_meeting")
-            cm.set_user_data("session_end", False)
+            if not cm.get_user_data("session"):
+                cm.set_user_data("session", "reserve_meeting")
+                cm.set_user_data("session_order", 'begin')
+                cm.set_user_data("session_end", False)
+
+                the_reply = cp.reserve_meeting_respond('begin')
+
+            else:
+
+                the_reply = "Meeting reservation in progress"
 
         case _:
-            the_reply = "I don't understand what you mean, could you rephrase?"
 
-        #x = conv_processor.get_steps()
-        #print(x)
+            if not cm.get_user_data("session"):
+                the_reply = "I don't understand what you mean, could you rephrase?"
+            else:
+                order = cm.get_user_data("session_order")
+                if order == 'begin':
+                    current_order = 1
+                    current_order_str = str(current_order)
+                    cm.set_user_data("session_order",current_order_str)
+                else:
+                    current_order = int(order) + 1
+                    current_order_str = str(current_order)
+                    cm.set_user_data("session_order",current_order_str)
 
-        #for a in x:
-        #   the_reply = the_reply + a
-        #
-        #the_reply = the_reply + ' nos = ' + str(conv_processor.get_number_of_steps())
+                the_reply = cp.reserve_meeting_respond(current_order_str)
 
     await message.answer(the_reply)
 

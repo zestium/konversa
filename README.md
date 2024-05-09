@@ -161,6 +161,63 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> 
 ```
 
+Same, but with script:
+
+```python
+import redis
+
+r = redis.Redis()
+
+reply = r.graph('reserve_meeting').query("MATCH (n) RETURN n.order, n.req, n.tpl")
+
+print(reply.result_set)
+
+for x in range(len(reply.result_set)):
+    print(reply.result_set[x])
+    print(reply.result_set[x][0])
+    print(reply.result_set[x][1])
+    print(reply.result_set[x][2])
+
+```
+
+Result:
+
+```bash
+[[0, '', 'reserve_meeting_begin'], [1, 'title', 'reserve_meeting_1'], [2, 'date', 'reserve_meeting_2'], [3, 'time', 'reserve_meeting_3'], [4, 'agenda', 'reserve_meeting_4'], [5, 'attendees', 'reserve_meeting_5'], [6, 'place', 'reserve_meeting_6'], [7, 'title,date,time,agenda,attendees,place', 'reserve_meeting_end']]
+[0, '', 'reserve_meeting_begin']
+0
+
+reserve_meeting_begin
+[1, 'title', 'reserve_meeting_1']
+1
+title
+reserve_meeting_1
+[2, 'date', 'reserve_meeting_2']
+2
+date
+reserve_meeting_2
+[3, 'time', 'reserve_meeting_3']
+3
+time
+reserve_meeting_3
+[4, 'agenda', 'reserve_meeting_4']
+4
+agenda
+reserve_meeting_4
+[5, 'attendees', 'reserve_meeting_5']
+5
+attendees
+reserve_meeting_5
+[6, 'place', 'reserve_meeting_6']
+6
+place
+reserve_meeting_6
+[7, 'title,date,time,agenda,attendees,place', 'reserve_meeting_end']
+7
+title,date,time,agenda,attendees,place
+reserve_meeting_end
+```
+
 ### Save Database
 
 From redis-cli:

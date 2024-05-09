@@ -21,7 +21,10 @@ class ConversationManager:
 
     def get_user_data(self, key):
 
-        return self.user_data[key]
+        if key in self.user_data:
+            return self.user_data[key]
+        else:
+            return False
 
     def get_all_user_data(self):
 
