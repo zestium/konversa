@@ -1,4 +1,3 @@
-from .kg import *
 from .cm import *
 from .cp import *
 from .nlg import *

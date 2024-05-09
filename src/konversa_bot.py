@@ -21,51 +21,53 @@ dp = Dispatcher()
 
 intent_engine = konversa.IntentEngine('dataset.csv')
 intent_engine.train_intent()
+cm = konversa.ConversationManager()
 
 @dp.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
     """
     This handler will be called when user sends `/start` command
     """
-    await message.answer(f"Hello, {html.bold(message.from_user.full_name)}!")
-
-@dp.message()
-async def echo_handler(message: Message) -> None:
-    # old style:
-    # await bot.send_message(message.chat.id, message.text)
-    #
-    
-    conv_manager = konversa.ConversationManager()
-
-    the_intent = intent_engine.classify_intent(message.text)
-
     user_id = message.from_user.id
     user_name = message.from_user.username
     user_first_name = message.from_user.first_name
     user_last_name = message.from_user.last_name
+    user_full_name = message.from_user.full_name
 
-    conv_manager.set_user_data("user_id", user_id)
-    conv_manager.set_user_data("user_name", user_name)
-    conv_manager.set_user_data("user_first_name", user_first_name)
-    conv_manager.set_user_data("user_last_name", user_last_name)
+    cm.set_user_data("user_id", user_id)
+    cm.set_user_data("user_name", user_name)
+    cm.set_user_data("user_first_name", user_first_name)
+    cm.set_user_data("user_last_name", user_last_name)
+    cm.set_user_data("user_full_name", user_full_name)
 
-    f_name = conv_manager.get_user_data("user_first_name")
-    l_name = conv_manager.get_user_data("user_last_name")
+    await message.answer(f"Hello, {html.bold(user_full_name)}!")
 
+@dp.message()
+async def echo_handler(message: Message) -> None:
+    
+    f_name = cm.get_user_data("user_first_name")
+    l_name = cm.get_user_data("user_last_name")
 
-    if len(the_intent) < 1:
-        the_reply = "I don't understand what you mean, could you rephrase?"
-    else:
+    the_intent = intent_engine.classify_intent(message.text)
 
-        the_data = {}
-        ner = intent_engine.get_ner(message.text, False)
-        the_data['person_name'] = ner
+    match the_intent[0][0]:
+        case "question_who":
 
-        #the_reply = 'Hi ' + f_name + ' ' + l_name + '!\nNER: ' + ner + '\nYour intention: ' + the_intent[0][0]
+            the_data = {}
+            ner = intent_engine.get_ner(message.text, False)
+            the_data['person_name'] = ner
 
-        conv_processor = konversa.ConversationProcessor(the_intent[0][0], the_data)
+            cp = konversa.ConversationProcessor(the_intent[0][0], the_data)
 
-        the_reply = conv_processor.answer_who()
+            the_reply = cp.answer_who()
+
+        case "reserve_meeting":
+
+            cm.set_user_data("session", "reserve_meeting")
+            cm.set_user_data("session_end", False)
+
+        case _:
+            the_reply = "I don't understand what you mean, could you rephrase?"
 
         #x = conv_processor.get_steps()
         #print(x)

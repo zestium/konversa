@@ -14,7 +14,7 @@ class ConversationProcessor:
     def __init__(self, intent, data_from_message):
 
         self.reply = r.graph(intent).query("MATCH (n) RETURN n")
-        self.the_data_from_message = data_from_message['person_name']
+        self.the_data_from_message = data_from_message
 
     def get_steps(self):
 
@@ -37,7 +37,7 @@ class ConversationProcessor:
 
     def answer_who(self):
 
-        the_answer = AnswerWho(self.the_data_from_message)
+        the_answer = AnswerWho(self.the_data_from_message['person_name'])
 
         ans = {}
 
