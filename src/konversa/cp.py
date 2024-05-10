@@ -29,6 +29,10 @@ class ConversationProcessor:
 
         return rm.num_of_steps()
 
+    def reserve_meeting_set_req(self, idx):
+
+        r
+
     def answer_who(self, person_data):
 
         the_answer = AnswerWho(person_data['person_name'])

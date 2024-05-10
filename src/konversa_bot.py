@@ -19,7 +19,7 @@ import konversa
 
 dp = Dispatcher()
 
-intent_engine = konversa.IntentEngine('dataset.csv')
+intent_engine = konversa.IntentEngine('konversa/datasets/dataset.csv')
 intent_engine.train_intent()
 cm = konversa.ConversationManager()
 
@@ -82,6 +82,10 @@ async def echo_handler(message: Message) -> None:
                     current_order = 1
                     current_order_str = str(current_order)
                     cm.set_user_data("session_order",current_order_str)
+                elif order == 'end':
+                    current_order_str = 'end'
+                    cm.set_user_data("session_order",current_order_str)
+                    cm.set_user_data("session_end", True)
                 else:
                     current_req = cp.reserve_meeting_get_req(int(order))
                     if current_req == '':
@@ -89,7 +93,11 @@ async def echo_handler(message: Message) -> None:
                         current_order_str = str(current_order)
                     else:
                         current_order = int(order) + 1
-                        current_order_str = str(current_order)
+                        if current_order == cp.reserve_meeting_get_nos():
+                            current_order_str == 'end'
+                        else:
+                            current_order_str = str(current_order)
+                        
                         cm.set_user_data("session_order",current_order_str)
 
                 the_reply = cp.reserve_meeting_respond(current_order_str)
@@ -100,20 +108,7 @@ async def echo_handler(message: Message) -> None:
                 the_reply = "I don't understand what you mean, could you rephrase?"
             else:
                 order = cm.get_user_data("session_order")
-                if order == 'begin':
-                    current_order = 1
-                    current_order_str = str(current_order)
-                    cm.set_user_data("session_order",current_order_str)
-                else:
-                    current_req = cp.reserve_meeting_get_req(int(order))
-                    if current_req == '':
-                        current_order = int(order)
-                        current_order_str = str(current_order)
-                    else:
-                        current_order = int(order) + 1
-                        current_order_str = str(current_order)
-                        cm.set_user_data("session_order",current_order_str)
-
+                
                 the_reply = 'Thank you for your reply'
 
     await message.answer(the_reply)
