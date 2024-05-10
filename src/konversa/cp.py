@@ -8,6 +8,8 @@ from .nlg import *
 
 r = redis.Redis()
 
+rm = ReserveMeeting()
+
 class ConversationProcessor:
 
     def __init__(self):
@@ -18,6 +20,14 @@ class ConversationProcessor:
         answer_reserve = NaturalLanguageGeneration('reserve_meeting_' + order, {})
 
         return answer_reserve.view()
+
+    def reserve_meeting_get_req(self, idx):
+
+        return rm.get_req(idx)
+
+    def reserve_meeting_get_nos(self):
+
+        return rm.num_of_steps()
 
     def answer_who(self, person_data):
 

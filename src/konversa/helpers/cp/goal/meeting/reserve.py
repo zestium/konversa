@@ -12,7 +12,7 @@ class ReserveMeeting:
 
     def num_of_steps(self):
 
-        return len(self.the_result)-1
+        return len(self.the_result)-2
 
     def get_req(self, idx_req):
 

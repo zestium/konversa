@@ -48,11 +48,16 @@ async def echo_handler(message: Message) -> None:
     f_name = cm.get_user_data("user_first_name")
     l_name = cm.get_user_data("user_last_name")
 
-    the_intent = intent_engine.classify_intent(message.text)
-
     cp = konversa.ConversationProcessor()
 
-    match the_intent[0][0]:
+    the_intent = intent_engine.classify_intent(message.text)
+
+    if len(the_intent) < 1:
+        user_intention = cm.get_user_data('session')
+    else:
+        user_intention = the_intent[0][0]
+
+    match user_intention:
         case "question_who":
 
             the_data = {}
@@ -72,7 +77,22 @@ async def echo_handler(message: Message) -> None:
 
             else:
 
-                the_reply = "Meeting reservation in progress"
+                order = cm.get_user_data("session_order")
+                if order == 'begin':
+                    current_order = 1
+                    current_order_str = str(current_order)
+                    cm.set_user_data("session_order",current_order_str)
+                else:
+                    current_req = cp.reserve_meeting_get_req(int(order))
+                    if current_req == '':
+                        current_order = int(order)
+                        current_order_str = str(current_order)
+                    else:
+                        current_order = int(order) + 1
+                        current_order_str = str(current_order)
+                        cm.set_user_data("session_order",current_order_str)
+
+                the_reply = cp.reserve_meeting_respond(current_order_str)
 
         case _:
 
@@ -85,11 +105,16 @@ async def echo_handler(message: Message) -> None:
                     current_order_str = str(current_order)
                     cm.set_user_data("session_order",current_order_str)
                 else:
-                    current_order = int(order) + 1
-                    current_order_str = str(current_order)
-                    cm.set_user_data("session_order",current_order_str)
+                    current_req = cp.reserve_meeting_get_req(int(order))
+                    if current_req == '':
+                        current_order = int(order)
+                        current_order_str = str(current_order)
+                    else:
+                        current_order = int(order) + 1
+                        current_order_str = str(current_order)
+                        cm.set_user_data("session_order",current_order_str)
 
-                the_reply = cp.reserve_meeting_respond(current_order_str)
+                the_reply = 'Thank you for your reply'
 
     await message.answer(the_reply)
 
