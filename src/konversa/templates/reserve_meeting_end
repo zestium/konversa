@@ -1,1 +1,10 @@
+Collected data:
+
+Meeting title: ${title}
+Meeting date: ${date}
+Meeting time: ${time}
+Meeting agenda: ${agenda}
+Meeting will be attended by: ${attendees}
+Meeting will be held at: ${place}
+
 I guess I have all the data. Meeting is reserved. Thank you.  

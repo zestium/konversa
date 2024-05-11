@@ -53,11 +53,11 @@ async def echo_handler(message: Message) -> None:
     cp = konversa.ConversationProcessor()
 
     the_intent = intent_engine.classify_intent(message.text)
-    
-    if not cm.get_user_data('session'):
-        user_intention = the_intent[0][0]
-    else:
+
+    if len(the_intent) < 1:
         user_intention = cm.get_user_data('session')
+    else:
+        user_intention = the_intent[0][0]
 
     the_data = {}
 
@@ -89,6 +89,31 @@ async def echo_handler(message: Message) -> None:
                     cm.set_user_data("session_order",current_order_str)
                     cm.set_user_data("session_end", True)
                 else:
+                    current_order = int(order) + 1
+                    if current_order > cp.reserve_meeting_get_nos():
+                        current_order_str = 'end'
+                    else:
+                        current_order_str = str(current_order)
+                        
+                    cm.set_user_data("session_order",current_order_str)
+
+                #the_reply = cp.reserve_meeting_respond(current_order_str, the_data)
+                the_reply = json.dumps(the_data) + '>>' + cp.reserve_meeting_respond(current_order_str, the_data)
+        case _:
+
+            if not cm.get_user_data("session"):
+                the_reply = "I don't understand what you mean, could you rephrase?"
+            else:
+                order = cm.get_user_data("session_order")
+                if order == 'begin':
+                    current_order = 1
+                    current_order_str = str(current_order)
+                    cm.set_user_data("session_order",current_order_str)
+                elif order == 'end':
+                    current_order_str = 'end'
+                    cm.set_user_data("session_order",current_order_str)
+                    cm.set_user_data("session_end", True)
+                else:
                     current_req = cp.reserve_meeting_get_req(int(order))
                     if not current_req in the_data:
                         current_order = int(order) + 1
@@ -101,16 +126,8 @@ async def echo_handler(message: Message) -> None:
                         
                     cm.set_user_data("session_order",current_order_str)
 
-                #the_reply = cp.reserve_meeting_respond(current_order_str, the_data)
                 the_reply = json.dumps(the_data) + '>>' + cp.reserve_meeting_respond(current_order_str, the_data)
-        case _:
 
-            if not cm.get_user_data("session"):
-                the_reply = "I don't understand what you mean, could you rephrase?"
-            elif cm.get_user_data("session") == 'begin':
-                the_reply = "Let's get started"
-            else:
-                the_reply = "Your answer: " + message.text + " has been saved"
 
     await message.answer(the_reply)
 

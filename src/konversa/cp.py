@@ -15,9 +15,12 @@ class ConversationProcessor:
     def __init__(self):
         pass
 
-    def reserve_meeting_respond(self, order):
+    def reserve_meeting_respond(self, order, dt={}):
 
-        answer_reserve = NaturalLanguageGeneration('reserve_meeting_' + order, {})
+        if not dt:
+            answer_reserve = NaturalLanguageGeneration('reserve_meeting_' + order, {})
+        else:
+            answer_reserve = NaturalLanguageGeneration('reserve_meeting_' + order, dt)
 
         return answer_reserve.view()
 
