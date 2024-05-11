@@ -101,8 +101,7 @@ async def echo_handler(message: Message) -> None:
                         
                     cm.set_user_data("session_order",current_order_str)
 
-                #the_reply = cp.reserve_meeting_respond(current_order_str, the_data)
-                the_reply = json.dumps(the_data) + '>>' + cp.reserve_meeting_respond(current_order_str, the_data)
+                the_reply = cp.reserve_meeting_respond(current_order_str, the_data)
         case _:
 
             if not cm.get_user_data("session"):
