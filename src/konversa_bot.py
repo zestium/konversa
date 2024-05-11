@@ -25,6 +25,8 @@ intent_engine = konversa.IntentEngine('konversa/datasets/dataset.csv')
 intent_engine.train_intent()
 cm = konversa.ConversationManager()
 
+the_data = {}
+
 @dp.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
     """
@@ -58,8 +60,6 @@ async def echo_handler(message: Message) -> None:
         user_intention = the_intent[0][0]
     else:
         user_intention = cm.get_user_data('session')
-
-    the_data = {}
 
     match user_intention:
         case "question_who":
