@@ -15,8 +15,8 @@
 
 ### Infrastructure
 
-1. [Redis](https://redis.io).
-2. [FalkorDB](https://www.falkordb.com). FalkorDB is RedisGraph fork.
+1. [Redis](https://redis.io). In this repo, we use version *7.4.3*
+2. [FalkorDB](https://www.falkordb.com). FalkorDB is RedisGraph fork. In this repo, we use version *4.8.6*
 
 For those two requirements, see [this article](https://zimeracorp.com/posts/18/) on how to install Redis and FalkorDB.
 
@@ -25,7 +25,7 @@ For those two requirements, see [this article](https://zimeracorp.com/posts/18/)
 We use [Python 3.12](https://www.python.org) and [Mamba](https://github.com/mamba-org/mamba) as our environment and package manager. We simply use **pip** for our package manager. See [requirements.txt](requirements.txt) file for complete packages list. Note that, basically we just installed these pre-requisites:
 
 1. [FalkorDB Python client](https://github.com/falkorDB/falkordb-py): `pip install FalkorDB`
-2. [falkordb-bulk-loader](https://pypi.org/project/falkordb-bulk-loader/): `pip install falkordb-build-loader`
+2. [falkordb-bulk-loader](https://pypi.org/project/falkordb-bulk-loader/): `pip install falkordb-builk-loader`
 3. [aiogram](https://aiogram.dev/): `pip install aiogram`
 4. [RDFlib](https://rdflib.dev/): `pip install rdflib`
 5. [SPARQLWrapper](https://github.com/RDFLib/sparqlwrapper): `pip install sparqlwrapper`
