@@ -9,13 +9,13 @@
  |_|\_\___/|_| |_|\_/ \___|_|  |___/\__,_|
 ```
 
-**Konversa** is a case study for property graph-based conversational agent.
+**Konversa** is a case study of the use of property graph for goal-oriented conversational agent.
 
 ## Requirements
 
 ### Infrastructure
 
-1. [Redis](https://redis.io). In this repo, we use version *7.4.3*
+1. [Redis](https://redis.io). In this repo, we use version *7.4.3*. However, version 8.0.0 (the new open source license version) can also be used.
 2. [FalkorDB](https://www.falkordb.com). FalkorDB is RedisGraph fork. In this repo, we use version *4.8.6*
 
 For those two requirements, see [this article](https://zimeracorp.com/posts/18/) on how to install Redis and FalkorDB.
@@ -67,7 +67,7 @@ python src/konversa_bot.py
 
 ### Redis
 
-Get [Redis Stack](https://redis.io/downloads/).
+Get [Redis](https://redis.io/downloads/).
 
 See [conf/](conf/) and make some changes, suitable to your server.
 
